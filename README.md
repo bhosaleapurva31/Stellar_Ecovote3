@@ -75,6 +75,22 @@ The DApp integrates with the four major browser-based wallets in the Stellar eco
 
 ---
 
+## 🖼️ Screenshots — Level 2
+
+### 💳 Wallet Options Available
+![Wallet Options Available](./Wallet%20Options%20Available.png)
+
+### ⏳ Transaction Processing
+![Transaction Processing](./⏳%20Transaction%20Processing.png)
+
+### ✅ Transaction Success + Voting UI
+![Transaction Success](./Transaction%20Success%20+%20Voting%20UI.png)
+
+### 🔍 Transaction Hash on Stellar Explorer
+![Transaction Hash on Stellar Explorer](./Transaction%20Hash%20on%20Stellar%20Explorer.png)
+
+---
+
 ## 📁 Project Structure
 
 ```text
