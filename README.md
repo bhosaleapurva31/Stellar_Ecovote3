@@ -4,6 +4,11 @@
 
 ---
 
+## 🌐 Live Demo
+👉 **[https://stellar-ecovote.vercel.app/](https://stellar-ecovote.vercel.app/)**
+
+---
+
 ## 🟡 Level 2 - Yellow Belt Submission
 
 This project focuses on multi-wallet integration, Soroban testnet smart contract calling, real-time sync, transaction state monitoring, and robust error handling.
