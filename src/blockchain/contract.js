@@ -4,6 +4,9 @@ import { Server } from "@stellar/stellar-sdk/rpc";
 export const CONTRACT_ID =
   "CABXIUP6FTYYHZKD7ZCASSMFKKUSXYNCPVKRBNCIXPUEPQ5C3ZWGZYTV";
 
+export const REWARD_CONTRACT_ID =
+  "CC3REWARD5FTYYHZKD7ZCASSMFKKUSXYNCPVKRBNCIXPUEPQ5C3ZWGVIP";
+
 export const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 export const RPC_URL = "https://soroban-testnet.stellar.org";
 
@@ -123,4 +126,35 @@ export async function waitForTransaction(hash) {
     await new Promise((r) => setTimeout(r, 2000));
   }
   throw new Error("Timeout");
+}
+
+// ================= GET POINTS =================
+export async function getPoints(publicKey) {
+  if (!publicKey) return 0;
+  try {
+    const contract = new StellarSdk.Contract(REWARD_CONTRACT_ID);
+    const account = await rpc.getAccount(READ_ACCOUNT);
+    const voter = StellarSdk.Address.fromString(publicKey);
+
+    const tx = new StellarSdk.TransactionBuilder(account, {
+      fee: "100",
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+      .addOperation(
+        contract.call(
+          "get_points",
+          voter.toScVal()
+        )
+      )
+      .setTimeout(30)
+      .build();
+
+    const sim = await rpc.simulateTransaction(tx);
+    if (sim.error) return 0;
+
+    return Number(StellarSdk.scValToNative(sim.result.retval));
+  } catch (e) {
+    console.error("GET POINTS ERROR:", e);
+    return 0;
+  }
 }

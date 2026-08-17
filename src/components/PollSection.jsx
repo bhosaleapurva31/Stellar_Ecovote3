@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getVotes, submitVote, waitForTransaction, CONTRACT_ID } from "../blockchain/contract";
+import { getVotes, submitVote, waitForTransaction, CONTRACT_ID, getPoints, REWARD_CONTRACT_ID } from "../blockchain/contract";
 
 const OPTIONS = [
   { id: 0, name: "Ocean Cleanup & Recovery", short: "OCEAN", color: "#0ea5e9", icon: "🌊" },
@@ -134,9 +134,27 @@ export default function PollSection({ connectedWallet, setError, setSuccess, set
   const [showShare, setShowShare]         = useState(false);
   const [countdown, setCountdown]         = useState(10);
   const [copiedHash, setCopiedHash]       = useState(null);
+  const [points, setPoints]               = useState(0);
 
   const totalVotes = votes.reduce((a, b) => a + b, 0);
   const animatedTotal = useAnimatedCount(totalVotes);
+
+  const fetchPoints = useCallback(async () => {
+    if (connectedWallet?.address) {
+      try {
+        const pts = await getPoints(connectedWallet.address);
+        setPoints(pts);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setPoints(0);
+    }
+  }, [connectedWallet]);
+
+  useEffect(() => {
+    fetchPoints();
+  }, [fetchPoints]);
 
   const fetchVotes = useCallback(async (silent) => {
     if (!silent) setIsRefreshing(true);
@@ -190,7 +208,10 @@ export default function PollSection({ connectedWallet, setError, setSuccess, set
           ...prev.slice(0, 4)
         ]);
         
-        setTimeout(() => fetchVotes(false), 2000);
+        setTimeout(() => {
+          fetchVotes(false);
+          fetchPoints();
+        }, 2000);
       } else {
         setTxStatus("fail");
         setError("The Soroban transaction failed during ledger finalization.");
@@ -249,6 +270,31 @@ export default function PollSection({ connectedWallet, setError, setSuccess, set
   return (
     <div className="poll-card" style={{ position: "relative" }}>
       {showBurst && <SuccessBurst option={votedOption !== null ? OPTIONS[votedOption].name : ""} />}
+
+      {connectedWallet && (
+        <div className="rewards-banner" style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "16px 20px",
+          background: "linear-gradient(135deg, rgba(16,185,129,0.1), rgba(14,165,233,0.1))",
+          border: "1px solid rgba(16,185,129,0.25)",
+          borderRadius: "16px",
+          marginBottom: "24px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "20px" }}>🏆</span>
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: "700", color: "#f8fafc" }}>Eco-Governance Rewards</div>
+              <div style={{ fontSize: "11px", color: "#94a3b8" }}>Earned by participating in green voting initiatives</div>
+            </div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", fontFamily: "monospace" }}>{points}</span>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "#94a3b8", marginLeft: "4px" }}>VP</span>
+          </div>
+        </div>
+      )}
 
       <div className="poll-header">
         <div>
