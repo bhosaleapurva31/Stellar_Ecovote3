@@ -116,6 +116,7 @@ stellar-eco-vote/
 
 - **CI/CD Pipeline Running**: (Workflow output in GitHub Actions tab)
 - **Frontend Test Suite Passing**: 
+  ![Test Output](./Test%20Output.png)
   ```text
   ✓ src/App.test.jsx  (4 tests)
   Tests  4 passed (4)
