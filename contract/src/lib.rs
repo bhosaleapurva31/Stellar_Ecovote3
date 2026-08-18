@@ -106,7 +106,7 @@ mod tests {
     use super::*;
     use soroban_sdk::{testutils::Address as _, Address, Env, String};
 
-    fn setup(env: &Env) -> (PollContractClient<'static>, VoterRewardContractClient<'static>, Address) {
+    fn setup<'a>(env: &'a Env) -> (PollContractClient<'a>, VoterRewardContractClient<'a>, Address) {
         env.mock_all_auths();
 
         // 1. Register VoterReward contract
