@@ -14,13 +14,17 @@ export default function WalletSection({
   const [loadingId, setLoadingId] = useState(null);
   const [wallets, setWallets]     = useState([]);
 
+  const openModal = () => {
+    setWallets(getInstalledWallets());
+    setShowModal(true);
+  };
+
   useEffect(() => {
     if (showModal) {
-      // Show instantly, then re-check after 500ms for async detection
-      setWallets(getInstalledWallets());
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setWallets(getInstalledWallets());
       }, 500);
+      return () => clearTimeout(timer);
     }
   }, [showModal]);
 
@@ -82,7 +86,7 @@ export default function WalletSection({
             </button>
           </div>
         ) : (
-          <button className="connect-btn" onClick={() => setShowModal(true)}>
+          <button className="connect-btn" onClick={openModal}>
             Connect Wallet
           </button>
         )}

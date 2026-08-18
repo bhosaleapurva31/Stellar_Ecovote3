@@ -32,7 +32,7 @@ function Navbar() {
   );
 }
 
-function ProjectInfo({ CONTRACT_ID }) {
+function ProjectInfo() {
   return (
     <div className="project-info">
       <div className="project-info-title">📖 About EcoVote</div>
@@ -180,7 +180,7 @@ export default function App() {
           )}
         </div>
 
-        <ProjectInfo CONTRACT_ID={CONTRACT_ID} />
+        <ProjectInfo />
       </div>
     </>
   );

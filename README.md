@@ -117,7 +117,8 @@ stellar-eco-vote/
 
 ## 🖼️ Screenshots
 
-- **CI/CD Pipeline Running**: (Workflow output in GitHub Actions tab)
+- **CI/CD Pipeline Running**:
+  ![CI/CD Pipeline](./CI_CD_Pipeline.png)
 - **Frontend Test Suite Passing**: 
   ![Test Output](./Test%20Output.png)
   ```text

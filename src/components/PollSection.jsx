@@ -30,23 +30,38 @@ function useAnimatedCount(target) {
 function Confetti() {
   const pieces = Array.from({ length: 32 }, (_, i) => i);
   const colors = ["#0ea5e9", "#10b981", "#eab308", "#f43f5e", "#a78bfa", "#f472b6"];
+  
+  // Deterministic pseudo-random values to satisfy eslint purity rules
+  const getPseudoRandom = (i, salt) => {
+    const x = Math.sin(i + salt) * 10000;
+    return x - Math.floor(x);
+  };
+
   return (
     <div className="confetti-wrap" aria-hidden="true">
-      {pieces.map((i) => (
-        <div
-          key={i}
-          className="confetti-piece"
-          style={{
-            left: Math.random() * 100 + "%",
-            background: colors[i % colors.length],
-            animationDelay: (Math.random() * 0.5) + "s",
-            animationDuration: (1.2 + Math.random() * 1) + "s",
-            width: (6 + Math.random() * 6) + "px",
-            height: (6 + Math.random() * 6) + "px",
-            borderRadius: Math.random() > 0.5 ? "50%" : "2px",
-          }}
-        />
-      ))}
+      {pieces.map((i) => {
+        const r1 = getPseudoRandom(i, 1.0);
+        const r2 = getPseudoRandom(i, 2.0);
+        const r3 = getPseudoRandom(i, 3.0);
+        const r4 = getPseudoRandom(i, 4.0);
+        const r5 = getPseudoRandom(i, 5.0);
+        const r6 = getPseudoRandom(i, 6.0);
+        return (
+          <div
+            key={i}
+            className="confetti-piece"
+            style={{
+              left: r1 * 100 + "%",
+              background: colors[i % colors.length],
+              animationDelay: (r2 * 0.5) + "s",
+              animationDuration: (1.2 + r3 * 1) + "s",
+              width: (6 + r4 * 6) + "px",
+              height: (6 + r5 * 6) + "px",
+              borderRadius: r6 > 0.5 ? "50%" : "2px",
+            }}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -57,15 +72,16 @@ function DonutChart({ votes, total }) {
   const cx = 65;
   const cy = 65;
   const circ = 2 * Math.PI * r;
-  let offset = 0;
-  const slices = OPTIONS.map((opt, i) => {
+  
+  const slices = [];
+  let currentOffset = 0;
+  for (let i = 0; i < OPTIONS.length; i++) {
     const pct = total > 0 ? votes[i] / total : 0.25;
     const dash = pct * circ;
     const gap = circ - dash;
-    const slice = { color: opt.color, dash, gap, offset };
-    offset += dash;
-    return slice;
-  });
+    slices.push({ color: OPTIONS[i].color, dash, gap, offset: currentOffset });
+    currentOffset += dash;
+  }
   return (
     <svg width={size} height={size} viewBox={"0 0 " + size + " " + size} className="donut-chart">
       <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="14" />
@@ -160,7 +176,7 @@ export default function PollSection({ connectedWallet, setError, setSuccess, set
     if (!silent) setIsRefreshing(true);
     const results = await Promise.all(
       OPTIONS.map(async (opt) => {
-        try { return await getVotes(opt.id); } catch (e) { return 0; }
+        try { return await getVotes(opt.id); } catch { return 0; }
       })
     );
     setVotes(results);
