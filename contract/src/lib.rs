@@ -106,31 +106,31 @@ mod tests {
     use super::*;
     use soroban_sdk::{testutils::Address as _, Address, Env, String};
 
-    fn setup() -> (Env, PollContractClient<'static>, VoterRewardContractClient<'static>, Address) {
-        let env = Env::default();
+    fn setup(env: &Env) -> (PollContractClient<'static>, VoterRewardContractClient<'static>, Address) {
         env.mock_all_auths();
 
         // 1. Register VoterReward contract
         let reward_contract_id = env.register_contract(None, VoterRewardContract);
-        let reward_client = VoterRewardContractClient::new(&env, &reward_contract_id);
+        let reward_client = VoterRewardContractClient::new(env, &reward_contract_id);
 
         // 2. Register PollContract
         let poll_contract_id = env.register_contract(None, PollContract);
-        let poll_client = PollContractClient::new(&env, &poll_contract_id);
+        let poll_client = PollContractClient::new(env, &poll_contract_id);
 
         // 3. Initialize both
         reward_client.init(&poll_contract_id);
         
-        let q = String::from_str(&env, "Which blockchain is best for payments?");
+        let q = String::from_str(env, "Which blockchain is best for payments?");
         poll_client.init(&q, &reward_contract_id);
 
-        let voter = Address::generate(&env);
-        (env, poll_client, reward_client, voter)
+        let voter = Address::generate(env);
+        (poll_client, reward_client, voter)
     }
 
     #[test]
     fn test_init_zero_votes() {
-        let (_env, poll_client, reward_client, voter) = setup();
+        let env = Env::default();
+        let (poll_client, reward_client, voter) = setup(&env);
         assert_eq!(poll_client.total_votes(), 0);
         assert_eq!(poll_client.get_votes(&0), 0);
         assert_eq!(reward_client.get_points(&voter), 0);
@@ -139,7 +139,8 @@ mod tests {
 
     #[test]
     fn test_vote_increments_and_awards_points() {
-        let (_env, poll_client, reward_client, voter) = setup();
+        let env = Env::default();
+        let (poll_client, reward_client, voter) = setup(&env);
         
         // Vote for option 0
         poll_client.vote(&voter, &0);
@@ -155,7 +156,8 @@ mod tests {
     #[test]
     #[should_panic(expected = "Already voted")]
     fn test_double_voting_panics() {
-        let (_env, poll_client, _reward_client, voter) = setup();
+        let env = Env::default();
+        let (poll_client, _reward_client, voter) = setup(&env);
         
         poll_client.vote(&voter, &0);
         poll_client.vote(&voter, &0); // Should fail/panic with "Already voted"
@@ -182,7 +184,8 @@ mod tests {
 
     #[test]
     fn test_get_question() {
-        let (env, poll_client, _reward_client, _voter) = setup();
+        let env = Env::default();
+        let (poll_client, _reward_client, _voter) = setup(&env);
         let q = poll_client.get_question();
         let expected = String::from_str(&env, "Which blockchain is best for payments?");
         assert_eq!(q, expected);
