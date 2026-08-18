@@ -77,7 +77,7 @@ impl PollContract {
         // Inter-contract communication: Award 10 points
         let reward_contract: Address = env.storage().instance().get(&DataKey::RewardContract).unwrap();
         let reward_client = VoterRewardContractClient::new(&env, &reward_contract);
-        reward_client.award_points(&env.current_contract_address(), &voter, &10u32);
+        reward_client.award_points(&env.current_contract_address(), &voter, 10);
 
         // Publish event
         env.events().publish((symbol_short!("voted"), option), count);
@@ -132,7 +132,7 @@ mod tests {
         let env = Env::default();
         let (poll_client, reward_client, voter) = setup(&env);
         assert_eq!(poll_client.total_votes(), 0);
-        assert_eq!(poll_client.get_votes(&0), 0);
+        assert_eq!(poll_client.get_votes(0), 0);
         assert_eq!(reward_client.get_points(&voter), 0);
         assert_eq!(poll_client.has_voted(&voter), false);
     }
@@ -143,9 +143,9 @@ mod tests {
         let (poll_client, reward_client, voter) = setup(&env);
         
         // Vote for option 0
-        poll_client.vote(&voter, &0);
+        poll_client.vote(&voter, 0);
         
-        assert_eq!(poll_client.get_votes(&0), 1);
+        assert_eq!(poll_client.get_votes(0), 1);
         assert_eq!(poll_client.total_votes(), 1);
         assert_eq!(poll_client.has_voted(&voter), true);
         
@@ -159,8 +159,8 @@ mod tests {
         let env = Env::default();
         let (poll_client, _reward_client, voter) = setup(&env);
         
-        poll_client.vote(&voter, &0);
-        poll_client.vote(&voter, &0); // Should fail/panic with "Already voted"
+        poll_client.vote(&voter, 0);
+        poll_client.vote(&voter, 0); // Should fail/panic with "Already voted"
     }
 
     #[test]
@@ -179,7 +179,7 @@ mod tests {
         
         // Attempt to call award_points directly from non-admin account/contract
         let intruder = Address::generate(&env);
-        reward_client.award_points(&intruder, &voter, &50); // Should fail/panic
+        reward_client.award_points(&intruder, &voter, 50); // Should fail/panic
     }
 
     #[test]
