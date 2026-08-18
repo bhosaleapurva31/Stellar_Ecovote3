@@ -7,6 +7,9 @@
 ## 🌐 Live Demo
 👉 **[https://stellar-ecovote.vercel.app/](https://stellar-ecovote.vercel.app/)**
 
+## 🎥 Demo Video
+👉 **[EcoVote Demo Video (Loom)](https://www.loom.com/share/ba23474ef78446189942ddacc8e1d65d)**
+
 ---
 
 ## 🟢 Level 3 - Advanced Smart Contracts + Production-Ready dApp
