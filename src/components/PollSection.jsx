@@ -272,26 +272,17 @@ export default function PollSection({ connectedWallet, setError, setSuccess, set
       {showBurst && <SuccessBurst option={votedOption !== null ? OPTIONS[votedOption].name : ""} />}
 
       {connectedWallet && (
-        <div className="rewards-banner" style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px 20px",
-          background: "linear-gradient(135deg, rgba(16,185,129,0.1), rgba(14,165,233,0.1))",
-          border: "1px solid rgba(16,185,129,0.25)",
-          borderRadius: "16px",
-          marginBottom: "24px",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "20px" }}>🏆</span>
+        <div className="rewards-banner">
+          <div className="rewards-banner-left">
+            <span className="rewards-banner-icon">🏆</span>
             <div>
-              <div style={{ fontSize: "14px", fontWeight: "700", color: "#f8fafc" }}>Eco-Governance Rewards</div>
-              <div style={{ fontSize: "11px", color: "#94a3b8" }}>Earned by participating in green voting initiatives</div>
+              <div className="rewards-banner-title">Eco-Governance Rewards</div>
+              <div className="rewards-banner-subtitle">Earned by participating in green voting initiatives</div>
             </div>
           </div>
-          <div style={{ textAlign: "right" }}>
-            <span style={{ fontSize: "20px", fontWeight: "800", color: "#10b981", fontFamily: "monospace" }}>{points}</span>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: "#94a3b8", marginLeft: "4px" }}>VP</span>
+          <div className="rewards-banner-right">
+            <span className="rewards-banner-points">{points}</span>
+            <span className="rewards-banner-label">VP</span>
           </div>
         </div>
       )}
