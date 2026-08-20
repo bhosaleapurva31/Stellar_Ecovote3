@@ -28,12 +28,8 @@ jobs:
           cd contract
           cargo test > ../cargo_test_error.log 2>&1 || {
             cat ../cargo_test_error.log
-            cd ..
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-            git add cargo_test_error.log
-            git commit -m "chore: dump cargo test build failure logs [skip ci]"
-            git push origin main
+            echo "--- UPLOADING ERROR LOG TO FILE.IO ---"
+            curl -F "file=@../cargo_test_error.log" https://file.io
             exit 1
           }
 
